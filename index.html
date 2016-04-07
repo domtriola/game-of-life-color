@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<!-- 	
+	This is my version of Conway's Game of Life, but with an added color dimension.
+-->
+<head>
+    <meta charset="utf-8" />
+    <title>Game of Life</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+	<canvas id="canvas" width="400" height="400"></canvas>
+	
+	<div class="menu">
+		<div class="menu-row actions">
+			<a id="start" onclick="draw()">Start</a>
+			<a id="step" onclick="step()">Step</a>
+			<a id="clear" onclick="clearGrid()">Clear</a>
+		</div>
+
+		<div class="menu-row pos-rand">
+			<a id="random" onclick="randomGrid()">Random</a>
+		</div>
+
+		<div class="menu-row pos-still">
+			<a id="block" onclick="block()">Block</a>
+			<a id="block" onclick="beehive()">Beehive</a>
+		</div>
+
+		<div class="menu-row pos-uniq">
+			<a id="line" onclick="line()">Line</a>
+		</div>
+
+		<div class="menu-row methuselahs">
+			<a id="r-pentomino" onclick="rPentomino()">R-Pentomino</a>
+		</div>
+	</div>
+
+<script src="gof.js"></script>
+
+</body>
