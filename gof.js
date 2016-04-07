@@ -1,3 +1,9 @@
+/* Things to do
+
+	- establish rules for color change
+
+*/
+
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
@@ -12,9 +18,15 @@ function setGrid(rows, columns) {
 	for (r=0; r<rows; r++) {
 		grid[r] = []
 		for (c=0; c<columns; c++) {
-			//randomly set initial life (at 50% chance to be alive)
-			var iniAlive = Math.floor(Math.random()*2);
-			grid[r][c] = { x: c*cellWidth, y: r*cellHeight, isAlive: 0, willBe: 0}
+			grid[r][c] = {
+				x: c*cellWidth, 
+				y: r*cellHeight, 
+				isAlive: 0, 
+				willBe: 0,
+				red: 0,
+				g: 0,
+				b: 0
+			}
 		}
 	}
 	return grid;
@@ -34,7 +46,15 @@ function drawGrid() {
 			ctx.strokeStyle = "#aaa";
 			ctx.stroke();
 			if(cell.isAlive) {
-				ctx.fillStyle = "#1565C0";
+				var iniR = Math.floor((Math.random() * 255)+1);
+				var iniG = Math.floor((Math.random() * 255)+1);
+				var iniB = Math.floor((Math.random() * 255)+1);
+
+				cell.r = iniR;
+				cell.g = iniG;
+				cell.b = iniB;
+				
+				ctx.fillStyle = "rgb("+cell.r+","+cell.g+","+cell.b+")";
 				ctx.fill();
 			}
 			ctx.closePath();
@@ -165,6 +185,7 @@ function clearGrid() {
 function randomGrid() {
 	for (r=0; r<grid.length; r++) {
 		for (c=0; c<grid[r].length; c++) {
+			//randomly set initial life (at 50% chance to be alive)
 			var iniAlive = Math.floor(Math.random()*2);
 			grid[r][c].isAlive = iniAlive;
 		}
