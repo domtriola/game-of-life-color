@@ -1,6 +1,25 @@
 /* Things to do
 
-	- establish rules for color change
+	- create parent color array in run_life() to set new colors based on parent values
+
+*/
+
+/* Game of Life Rules
+
+	- Each live cell with fewer than 2 neighbors dies
+	- Each live cell with greater than 3 neighbors dies
+	- Each live cell with 2 or 3 neighbors lives
+	- Each dead cell with exactly 3 neighbors comes alive 
+
+*/
+
+/* Color Rules
+
+	- A new cell's color will be decided by comparing the rgb values of its parents
+	- A live cell that stays alive will lose a small amount of color each step
+
+	- If colors go below a certain level cell dies?
+	- If 2 potential parents are "bright" enough cell is born?
 
 */
 
@@ -23,7 +42,7 @@ function setGrid(rows, columns) {
 				y: r*cellHeight, 
 				isAlive: 0, 
 				willBe: 0,
-				red: 0,
+				r: 0,
 				g: 0,
 				b: 0
 			}
@@ -74,10 +93,11 @@ function runLife() {
 			//count live neighbors
 			count = 0;
 			
+			parents = [];
 			//for non-edge cases
 			for (i=r-1; i<r+2; i++) {
 				for (j=c-1; j<c+2; j++) {	
-					
+
 					//setup edge variables
 					var leftEdge = 0;
 					var rightEdge = 0;
@@ -107,6 +127,7 @@ function runLife() {
 					} else {
 						if (grid[i][j].isAlive && !(i==r && j==c)) {
 							count+=1;
+							parents += {r: grid[i][j].r, g: grid[i][j].g, b: grid[i][j].b};
 						}
 					}				
 				}
