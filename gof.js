@@ -121,7 +121,7 @@ function runLife() {
 					} else {
 						if (grid[i][j].isAlive && !(i==r && j==c)) {
 							count+=1;
-							parents += {r: grid[i][j].r, g: grid[i][j].g, b: grid[i][j].b};
+							parents = parents.concat({r: grid[i][j].r, g: grid[i][j].g, b: grid[i][j].b});
 						}
 					}				
 				}
@@ -137,9 +137,9 @@ function runLife() {
 					cell.willBe = 'dead';
 				}
 			} else if (count == 3) {
-				cell.r2 = cell.r;
-				cell.g2 = cell.g;
-				cell.b2 = cell.b;
+				cell.r2 = parents[0].r;
+				cell.g2 = parents[0].g;
+				cell.b2 = parents[0].b;
 				cell.willBe = 'alive';
 			} else {
 				cell.willBe = 'dead';
@@ -156,6 +156,8 @@ function runLife() {
 			var cell = grid[r][c];
 			if (cell.willBe == 'alive') {
 				cell.r = cell.r2;
+				cell.g = cell.g2;
+				cell.b = cell.b2;
 				cell.isAlive = 1;
 			} else {
 				cell.isAlive = 0;
