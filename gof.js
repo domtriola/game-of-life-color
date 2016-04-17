@@ -42,9 +42,12 @@ function setGrid(rows, columns) {
 				y: r*cellHeight, 
 				isAlive: 0, 
 				willBe: 0,
-				r: 0,
-				g: 0,
-				b: 0
+				r: null,
+				g: null,
+				b: null,
+				r2: null,
+				g2: null,
+				b2: null
 			}
 		}
 	}
@@ -65,14 +68,6 @@ function drawGrid() {
 			ctx.strokeStyle = "#aaa";
 			ctx.stroke();
 			if(cell.isAlive) {
-				var iniR = Math.floor((Math.random() * 255)+1);
-				var iniG = Math.floor((Math.random() * 255)+1);
-				var iniB = Math.floor((Math.random() * 255)+1);
-
-				cell.r = iniR;
-				cell.g = iniG;
-				cell.b = iniB;
-				
 				ctx.fillStyle = "rgb("+cell.r+","+cell.g+","+cell.b+")";
 				ctx.fill();
 			}
@@ -84,7 +79,6 @@ function drawGrid() {
 //No life beyond walls (does not act like a torus)
 function runLife() {
 
-	var aliveCount = 0;
 	//determine whether cells will be alive or dead
 	for (r=0; r<grid.length; r++) {
 		for (c=0; c<grid[r].length; c++) {
@@ -134,13 +128,18 @@ function runLife() {
 			}
 
 			if (cell.isAlive) {	
-				aliveCount+=1;
 				if (count > 1 && count < 4) {
+					cell.r2 = cell.r;
+					cell.g2 = cell.g;
+					cell.b2 = cell.b;
 					cell.willBe = 'alive';
 				} else {
 					cell.willBe = 'dead';
 				}
 			} else if (count == 3) {
+				cell.r2 = cell.r;
+				cell.g2 = cell.g;
+				cell.b2 = cell.b;
 				cell.willBe = 'alive';
 			} else {
 				cell.willBe = 'dead';
@@ -156,6 +155,7 @@ function runLife() {
 			//name cell for easier reference
 			var cell = grid[r][c];
 			if (cell.willBe == 'alive') {
+				cell.r = cell.r2;
 				cell.isAlive = 1;
 			} else {
 				cell.isAlive = 0;
@@ -203,6 +203,33 @@ function clearGrid() {
 /* Options
 ***************/
 
+function randomColors() {
+	for (r=0; r<grid.length; r++) {
+		for (c=0; c<grid[r].length; c++) {
+			//name cell for easier reference
+			var cell = grid[r][c];
+
+			ctx.beginPath();
+			ctx.rect(cell.x, cell.y, cellWidth, cellHeight);
+			ctx.strokeStyle = "#aaa";
+			ctx.stroke();
+			if(cell.isAlive) {
+				var iniR = Math.floor((Math.random() * 255)+1);
+				var iniG = Math.floor((Math.random() * 255)+1);
+				var iniB = Math.floor((Math.random() * 255)+1);
+
+				cell.r = iniR;
+				cell.g = iniG;
+				cell.b = iniB;
+				
+				ctx.fillStyle = "rgb("+cell.r+","+cell.g+","+cell.b+")";
+				ctx.fill();
+			}
+			ctx.closePath();
+		}
+	}
+}
+
 function randomGrid() {
 	for (r=0; r<grid.length; r++) {
 		for (c=0; c<grid[r].length; c++) {
@@ -211,7 +238,7 @@ function randomGrid() {
 			grid[r][c].isAlive = iniAlive;
 		}
 	}
-	drawGrid();
+	randomColors();
 }
 
 //starting positions
@@ -220,7 +247,7 @@ function block() {
 	grid[Math.floor(gridRows/2)][Math.floor(gridColumns/2-1)].isAlive = 1;
 	grid[Math.floor(gridRows/2-1)][Math.floor(gridColumns/2)].isAlive = 1;
 	grid[Math.floor(gridRows/2)][Math.floor(gridColumns/2)].isAlive = 1;
-	drawGrid();
+	randomColors();
 }
 
 function beehive() {
@@ -230,14 +257,14 @@ function beehive() {
 	grid[Math.floor(gridRows/2+1)][Math.floor(gridColumns/2-1)].isAlive = 1;
 	grid[Math.floor(gridRows/2-1)][Math.floor(gridColumns/2)].isAlive = 1;
 	grid[Math.floor(gridRows/2)][Math.floor(gridColumns/2)].isAlive = 1;
-	drawGrid();
+	randomColors();
 }
 
 function line() {
 	for (c=0; c<gridColumns; c++) {
 		grid[Math.floor(gridRows/2-1)][c].isAlive = 1;
 	}
-	drawGrid();
+	randomColors();
 }
 
 function rPentomino() {
@@ -246,7 +273,7 @@ function rPentomino() {
 	grid[Math.floor(gridRows/2-1)][Math.floor(gridColumns/2)].isAlive = 1;
 	grid[Math.floor(gridRows/2-2)][Math.floor(gridColumns/2)].isAlive = 1;
 	grid[Math.floor(gridRows/2-1)][Math.floor(gridColumns/2+1)].isAlive = 1;
-	drawGrid();
+	randomColors();
 }
 
 
