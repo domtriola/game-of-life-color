@@ -102,17 +102,23 @@ function runLife() {
 					var topEdge = 0;
 					var bottomEdge = 0;
 
-					if (i<0) {
+					if (i<0)
 						leftEdge = 1;
-					} else if (i > gridRows - 1) {
+					else if (i > gridRows - 1)
 						rightEdge = 1;
-					}
-					if (j<0) {
+					if (j<0)
 						topEdge = 1;
-					} else if (j > gridColumns - 1) {
+					else if (j > gridColumns - 1)
 						bottomEdge = 1;
+
+					if (!(leftEdge || rightEdge || topEdge || bottomEdge)) {
+						if (grid[i][j].isAlive && !(i==r && j==c)) {
+							count+=1;
+							parents = parents.concat({r: grid[i][j].r, g: grid[i][j].g, b: grid[i][j].b});
+						}
 					}
 
+					/*
 					//fill in if statements for torus effect
 					if (leftEdge && topEdge) {
 					} else if (leftEdge && bottomEdge) {
@@ -127,7 +133,8 @@ function runLife() {
 							count+=1;
 							parents = parents.concat({r: grid[i][j].r, g: grid[i][j].g, b: grid[i][j].b});
 						}
-					}				
+					}
+					*/			
 				}
 			}
 
@@ -137,9 +144,8 @@ function runLife() {
 					cell.g2 = cell.g;
 					cell.b2 = cell.b;
 					cell.willBe = 'alive';
-				} else {
+				} else
 					cell.willBe = 'dead';
-				}
 			} else if (count == 3) {
 				var avgR = 0; 
 				var avgG = 0; 
@@ -158,9 +164,8 @@ function runLife() {
 				cell.b2 = avgB;
 
 				cell.willBe = 'alive';
-			} else {
+			} else
 				cell.willBe = 'dead';
-			}
 		}
 	}
 
@@ -175,9 +180,8 @@ function runLife() {
 				cell.g = cell.g2;
 				cell.b = cell.b2;
 				cell.isAlive = 1;
-			} else {
+			} else
 				cell.isAlive = 0;
-			}
 		}
 	}
 
@@ -195,9 +199,8 @@ function draw() {
 		runLife();
 		//console.log('testing');
 		t=0;
-	} else {
+	} else
 		t++;
-	}
 
 	requestAnimationFrame(draw);
 }
@@ -279,9 +282,8 @@ function beehive() {
 }
 
 function line() {
-	for (c=0; c<gridColumns; c++) {
+	for (c=0; c<gridColumns; c++)
 		grid[Math.floor(gridRows/2-1)][c].isAlive = 1;
-	}
 	randomColors();
 }
 
