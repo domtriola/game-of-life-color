@@ -97,10 +97,7 @@ function runLife() {
 				for (j=c-1; j<c+2; j++) {	
 
 					//setup edge variables
-					var leftEdge = 0;
-					var rightEdge = 0;
-					var topEdge = 0;
-					var bottomEdge = 0;
+					var leftEdge = 0, rightEdge = 0, topEdge = 0, bottomEdge = 0;
 
 					if (i<0)
 						leftEdge = 1;
@@ -147,21 +144,51 @@ function runLife() {
 				} else
 					cell.willBe = 'dead';
 			} else if (count == 3) {
-				var avgR = 0; 
-				var avgG = 0; 
-				var avgB = 0;
-				for (var i = 0; i < count; i++) {
-					avgR += parents[i].r;
-					avgG += parents[i].g;
-					avgB += parents[i].b;
-				}
-				avgR = Math.floor(avgR / parents.length);
-				avgB = Math.floor(avgB / parents.length);
-				avgG = Math.floor(avgG / parents.length);
+				var newR = 0, newG = 0, newB = 0;
 				
-				cell.r2 = avgR;
-				cell.g2 = avgG;
-				cell.b2 = avgB;
+				//find averages for parent rgb values
+				for (var i = 0; i < count; i++) {
+					newR += parents[i].r;
+					newG += parents[i].g;
+					newB += parents[i].b;
+				}
+				newR = Math.floor(newR / parents.length);
+				newB = Math.floor(newB / parents.length);
+				newG = Math.floor(newG / parents.length);
+
+				function makeDominant(number) {
+					if (number < 155)
+						number += 100;
+					else
+						number = 255;
+					return number
+				}
+
+				function makeRecessive(number) {
+					if (number > 100)
+						number -= 100;
+					else
+						number = 0;
+					return number
+				}
+
+				if (newR > newG && newR > newB)
+					newR = makeDominant(newR);
+				else if (newG > newR && newG > newB)
+					newG = makeDominant(newG);
+				else if (newB > newR && newB > newG)
+					newB = makeDominant(newB);
+
+				if (newR < newG && newR < newB)
+					newR = makeRecessive(newR);
+				else if (newG < newR && newG < newB)
+					newG = makeRecessive(newG);
+				else if (newB < newR && newB < newG)
+					newB = makeRecessive(newB);
+
+				cell.r2 = newR;
+				cell.g2 = newG;
+				cell.b2 = newB;
 
 				cell.willBe = 'alive';
 			} else
