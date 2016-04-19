@@ -1,6 +1,7 @@
 /* Things to do
 
-	- create parent color array in run_life() to set new colors based on parent values
+	- Define more specific "Color Rules" and implement
+	- Implement a rule to make colors stay bright rather than shift towards grey
 
 */
 
@@ -14,6 +15,9 @@
 */
 
 /* Color Rules
+
+	// Right now newly born cells adopt the average of their parents' colors,
+	   and surviving cells stay the same color.
 
 	- A new cell's color will be decided by comparing the rgb values of its parents
 	- A live cell that stays alive will lose a small amount of color each step
@@ -85,9 +89,9 @@ function runLife() {
 			//name cell for easier reference
 			var cell = grid[r][c];
 			//count live neighbors
-			count = 0;
+			var count = 0;
 			
-			parents = [];
+			var parents = [];
 			//for non-edge cases
 			for (i=r-1; i<r+2; i++) {
 				for (j=c-1; j<c+2; j++) {	
@@ -137,14 +141,26 @@ function runLife() {
 					cell.willBe = 'dead';
 				}
 			} else if (count == 3) {
-				cell.r2 = parents[0].r;
-				cell.g2 = parents[0].g;
-				cell.b2 = parents[0].b;
+				var avgR = 0; 
+				var avgG = 0; 
+				var avgB = 0;
+				for (var i = 0; i < count; i++) {
+					avgR += parents[i].r;
+					avgG += parents[i].g;
+					avgB += parents[i].b;
+				}
+				avgR = Math.floor(avgR / parents.length);
+				avgB = Math.floor(avgB / parents.length);
+				avgG = Math.floor(avgG / parents.length);
+				
+				cell.r2 = avgR;
+				cell.g2 = avgG;
+				cell.b2 = avgB;
+
 				cell.willBe = 'alive';
 			} else {
 				cell.willBe = 'dead';
 			}
-			
 		}
 	}
 
