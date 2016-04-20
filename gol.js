@@ -1,10 +1,3 @@
-/* Things to do
-
-	- Define more specific "Color Rules" and implement
-	- Implement a rule to make colors stay bright rather than shift towards grey
-
-*/
-
 /* Game of Life Rules
 
 	- Each live cell with fewer than 2 neighbors dies
@@ -16,14 +9,15 @@
 
 /* Color Rules
 
-	// Right now newly born cells adopt the average of their parents' colors,
-	   and surviving cells stay the same color.
+	// The following rules produce a result where colors start relatively dim and grey,
+	   but become inreasingly bright the longer a gene-pool exists.
 
-	- A new cell's color will be decided by comparing the rgb values of its parents
-	- A live cell that stays alive will lose a small amount of color each step
-
-	- If colors go below a certain level cell dies?
-	- If 2 potential parents are "bright" enough cell is born?
+	- Newly born cells adopt the average of their parents' colors
+	  with adjustments for dominance, recessiveness, and randomness.
+	For newborns:
+		- The dominant rgb value is amplified by a small amount
+		- The recessive rgb value is diminished by a small amount
+		- The mid rgb value is randomly amplified or diminished within a range of magnitude
 
 */
 
@@ -36,6 +30,42 @@ var cellWidth = canvas.width / gridColumns;
 var cellHeight = canvas.height / gridRows;
 var grid = [];
 
+var domIntensity = 2;
+var recIntensity = 2;
+var midIntensity = 50;
+
+function colorDominant(number) {	
+	if (number < 255 - domIntensity)
+		number += domIntensity;
+	else
+		number = 255;
+	return number
+}
+
+function colorRecessive(number) {
+	if (number > recIntensity)
+		number -= recIntensity;
+	else
+		number = 0;
+	return number
+}
+
+function colorMid(number) {
+	var newColor = number;
+	var change = Math.floor(Math.random()*midIntensity);
+	
+	if (Math.floor(Math.random() * 2))
+		newColor += change;
+	else
+		newColor -= change;
+	
+	if (newColor <= 255 && newColor >= 0)
+		return newColor;
+	else {
+		return colorMid(number);
+	}
+	
+}
 
 function setGrid(rows, columns) {
 	for (r=0; r<rows; r++) {
@@ -156,39 +186,39 @@ function runLife() {
 				newB = Math.floor(newB / parents.length);
 				newG = Math.floor(newG / parents.length);
 
-				function makeDominant(number) {
-					if (number < 155)
-						number += 100;
-					else
-						number = 255;
-					return number
-				}
-
-				function makeRecessive(number) {
-					if (number > 100)
-						number -= 100;
-					else
-						number = 0;
-					return number
-				}
-
 				if (newR > newG && newR > newB)
-					newR = makeDominant(newR);
+					newR = colorDominant(newR);
 				else if (newG > newR && newG > newB)
-					newG = makeDominant(newG);
+					newG = colorDominant(newG);
 				else if (newB > newR && newB > newG)
-					newB = makeDominant(newB);
+					newB = colorDominant(newB);
 
 				if (newR < newG && newR < newB)
-					newR = makeRecessive(newR);
+					newR = colorRecessive(newR);
 				else if (newG < newR && newG < newB)
-					newG = makeRecessive(newG);
+					newG = colorRecessive(newG);
 				else if (newB < newR && newB < newG)
-					newB = makeRecessive(newB);
+					newB = colorRecessive(newB);
+
+				if (newR > newG && newR < newB)
+					newR = colorMid(newR);
+				else if (newR < newG && newR > newB)
+					newR = colorMid(newR);
+				else if (newG > newR && newG < newB)
+					newG = colorMid(newG);
+				else if (newG < newR && newG > newB)
+					newG = colorMid(newG);
+				else if (newB > newR && newB < newG)
+					newB = colorMid(newB);
+				else if (newB < newR && newB > newG)
+					newB = colorMid(newB);
 
 				cell.r2 = newR;
+				//console.log("red: " + cell.r2);
 				cell.g2 = newG;
+				//console.log("green: " + cell.g2);
 				cell.b2 = newB;
+				//console.log("blue: " + cell.b2);
 
 				cell.willBe = 'alive';
 			} else
