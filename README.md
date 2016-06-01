@@ -16,6 +16,8 @@ The following rules produce a result where colors start relatively dim and grey,
 * Newly born cells adopt the average of their parents' colors with adjustments for dominance, recessiveness, and randomness.
 
 For newborns:
- * The dominant rgb value is amplified by a small amount
- * The recessive rgb value is diminished by a small amount
- * The mid rgb value is randomly amplified or diminished within a range of magnitude
+* The dominant rgb value is amplified by a small amount
+* The recessive rgb value is diminished by a small amount
+* The mid rgb value is randomly amplified or diminished within a range of magnitude
+
+ [See it in action](https://triolacreative.com/a-colorful-game-of-life/)
