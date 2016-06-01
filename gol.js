@@ -1,26 +1,3 @@
-/* Game of Life Rules
-
-	- Each live cell with fewer than 2 neighbors dies
-	- Each live cell with greater than 3 neighbors dies
-	- Each live cell with 2 or 3 neighbors lives
-	- Each dead cell with exactly 3 neighbors comes alive 
-
-*/
-
-/* Color Rules
-
-	// The following rules produce a result where colors start relatively dim and grey,
-	   but become inreasingly bright the longer a gene-pool exists.
-
-	- Newly born cells adopt the average of their parents' colors
-	  with adjustments for dominance, recessiveness, and randomness.
-	For newborns:
-		- The dominant rgb value is amplified by a small amount
-		- The recessive rgb value is diminished by a small amount
-		- The mid rgb value is randomly amplified or diminished within a range of magnitude
-
-*/
-
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
@@ -214,11 +191,8 @@ function runLife() {
 					newB = colorMid(newB);
 
 				cell.r2 = newR;
-				//console.log("red: " + cell.r2);
 				cell.g2 = newG;
-				//console.log("green: " + cell.g2);
 				cell.b2 = newB;
-				//console.log("blue: " + cell.b2);
 
 				cell.willBe = 'alive';
 			} else
@@ -254,7 +228,6 @@ function draw() {
 		ctx.clearRect(0,0,canvas.width, canvas.height);
 		drawGrid();
 		runLife();
-		//console.log('testing');
 		t=0;
 	} else
 		t++;
