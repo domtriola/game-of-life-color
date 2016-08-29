@@ -5,6 +5,9 @@ function Game(canvasId, options) {
 	this.context = this.canvas.getContext('2d');
 	this.rows = options['rows'];
 	this.columns = options['columns'];
+	this.recIntensity = options['recIntensity'];
+	this.midIntensity = options['midIntensity'];
+	this.domIntensity = options['domIntensity'];
 	this.grid = new Grid(this.rows, this.columns);
 	this.cellWidth = this.canvas.width / this.columns;
 	this.cellHeight = this.canvas.height / this.rows;
@@ -14,7 +17,7 @@ Game.prototype.draw = function() {
 	var ctx = this.context;
 	var cellWidth = this.cellWidth;
 	var cellHeight = this.cellHeight;
-	ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.grid.space.forEach(function(row, i) {
 		row.forEach(function(cell, j) {
 			ctx.beginPath();
@@ -22,7 +25,13 @@ Game.prototype.draw = function() {
 			ctx.strokeStyle = "#ccc";
 			ctx.stroke();
 			if(cell.state) {
-				ctx.fillStyle = "rgb("+cell.rgb[0]+","+cell.rgb[1]+","+cell.rgb[2]+")";
+				var red = numberToPaddedHex(Math.floor(cell.rgb[0]));
+				var green = numberToPaddedHex(Math.floor(cell.rgb[1]));
+				var blue = numberToPaddedHex(Math.floor(cell.rgb[2]));
+				var fill = "#" + red + green + blue;
+				ctx.fillStyle = fill;
+				if (ctx.fillStyle != fill)
+					throw ("Fillstyle is changed from " + fill + " to " + ctx.fillStyle);
 				ctx.fill();
 			}
 			ctx.closePath();
@@ -34,7 +43,7 @@ Game.prototype.setGrid = function() {
 		for (var j=0; j < this.grid.rows; j++)
 			this.grid.set(new Vector(i, j), new Cell(new Vector(i, j)));
 	}
-	this.draw(this.grid);
+	this.draw();
 }
 Game.prototype.turn = function() {
 	this.grid.space.forEach(function(row, i) {
@@ -57,6 +66,12 @@ Game.prototype.turn = function() {
 Game.prototype.play = function() {
 	while (this.autoStepping)
 		this.draw(this.grid);
+}
+function numberToPaddedHex(num) {
+	var result = Number(num).toString(16);
+	if (result.length < 2)
+		result = "0" + result;
+	return result;
 }
 
 function Vector(x, y) {
@@ -143,7 +158,7 @@ Cell.prototype.checkNeighbors = function() {
 		if (this.state == 0) {
 			if (neighborCount == 3) {
 				this.nextState = 1;
-				this.nextRgb = this.assignColor(neighborColors);
+				this.nextRgb = this.parentsColor(neighborColors);
 			}
 		} else if (!(neighborCount == 2 || neighborCount ==3)) {
 			this.nextState = 0;
@@ -157,7 +172,7 @@ Cell.prototype.checkNeighbors = function() {
 Cell.prototype.colorRandom = function() {
 	this.rgb = [randRgb(), randRgb(), randRgb()];
 };
-Cell.prototype.assignColor = function(neighborColors) {
+Cell.prototype.parentsColor = function(neighborColors) {
 	var reds = [];
 	var greens = [];
 	var blues = [];
@@ -166,9 +181,9 @@ Cell.prototype.assignColor = function(neighborColors) {
 		greens.push(color[1]);
 		blues.push(color[2]);
 	});
-	var redSum = reds.reduce(function(sum, color) { return sum + color; });
-	var greenSum = greens.reduce(function(sum, color) { return sum + color; });
-	var blueSum = blues.reduce(function(sum, color) { return sum + color; });
+	var redSum = reds.reduce(function(sum, color) { return sum + color; }, 0);
+	var greenSum = greens.reduce(function(sum, color) { return sum + color; }, 0);
+	var blueSum = blues.reduce(function(sum, color) { return sum + color; }, 0);
 	var redAvg = redSum / reds.length;
 	var greenAvg = greenSum / greens.length;
 	var blueAvg = blueSum / blues.length;
@@ -191,7 +206,7 @@ Cell.prototype.assignColor = function(neighborColors) {
 			nextColors[1] = colorHash[Object.keys(colorHash)[0]];
 		else
 			nextColors[2] = colorHash[Object.keys(colorHash)[0]];
-	}, this);
+	});
 	return nextColors;
 };
 function compareColors(a, b) {
@@ -204,12 +219,30 @@ function compareColors(a, b) {
 	return 0;
 }
 function colorRecessive(color) {
+	if (color > game.recIntensity)
+		color -= game.recIntensity;
+	else
+		color = 0;
 	return color;
 };
 function colorMid(color) {
-	return color;
+	var newColor = color;
+	var change = Math.floor(Math.random() * game.midIntensity);
+	if (Math.floor(Math.random() * 2))
+		newColor += change;
+	else
+		newColor -= change;
+
+	if (newColor <= 255 && newColor >= 0) {
+		return newColor;
+	} else
+		return colorMid(color);
 };
 function colorDominant(color) {
+	if (color < 255 - game.domIntensity)
+		color += game.domIntensity;
+	else
+		color = 255;
 	return color;
 };
 
@@ -217,11 +250,12 @@ function randRgb() {
 	return Math.floor((Math.random() * 255) + 1);
 }
 
+
 //* Run Program
 
 var defaultOpts = {
-	rows: 60,
-	columns: 60,
+	rows: 50,
+	columns: 50,
 	domIntensity: 2,
 	recIntensity: 2,
 	midIntensity: 50
