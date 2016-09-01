@@ -258,14 +258,20 @@ var defaultOpts = {
 
 var game = new Game('canvas', defaultOpts);
 var autoStepping = true;
+var timeInterval = 60;
 game.setGrid();
 
 // html button commands
 function play() {
 	autoStepping = true;
+	var start = null;
 	function autoStep() {
-		step();
-		if (autoStepping)
+		if (start === null) start = Date.now();
+		if (autoStepping && Date.now() - start > timeInterval) {
+			step();
+			start = null;
+			requestAnimationFrame(autoStep);
+		} else if (autoStepping)
 			requestAnimationFrame(autoStep);
 	}
 	autoStep();
@@ -279,6 +285,14 @@ function step() {
 }
 function clearGrid() {
 	game.setGrid();
+	timeInterval = 60;
+}
+function slower() {
+	timeInterval += 20;
+}
+function faster() {
+	if (timeInterval > 0)
+		timeInterval -= 20;
 }
 
 // Starting configurations
