@@ -45,11 +45,9 @@ Game.prototype.setGrid = function() {
 	this.draw();
 }
 Game.prototype.turn = function() {
-	this.grid.space.forEach(function(row, i) {
-		row.forEach(function(cell, j) {
-			this.grid.space[i][j].getNeighbors();
-		}, this);
-	}, this);
+	eachCell(function(cell) {
+		cell.getNeighbors();
+	});
 	this.grid.space.forEach(function(row, i) {
 		row.forEach(function(cell, j) {
 			this.grid.space[i][j].checkNeighbors();
@@ -240,9 +238,17 @@ function colorDominant(color) {
 		color = 255;
 	return color;
 };
-
 function randRgb() {
 	return Math.floor((Math.random() * 255) + 1);
+}
+
+function eachCell(body) {
+	for (var c = 0; c < game.columns; c++) {
+		for (var r = 0; r < game.rows; r++) {
+			var cell = game.grid.space[c][r];
+			body(cell);
+		}
+	}
 }
 
 
@@ -297,14 +303,12 @@ function faster() {
 
 // Starting configurations
 function random() {
-	for (var c = 0; c < game.columns; c++) {
-		for (var r = 0; r < game.rows; r++) {
-			if (Math.floor(Math.random() * 2)) {
-				game.grid.space[c][r].state = 1;
-				game.grid.space[c][r].colorRandom();
-			}
+	eachCell(function(cell) {
+		if (Math.floor(Math.random() * 2)) {
+			cell.state = 1;
+			cell.colorRandom();
 		}
-	}
+	});
 	game.draw();
 }
 function block() {
