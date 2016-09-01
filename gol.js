@@ -11,7 +11,6 @@ function Game(canvasId, options) {
 	this.grid = new Grid(this.rows, this.columns);
 	this.cellWidth = this.canvas.width / this.columns;
 	this.cellHeight = this.canvas.height / this.rows;
-	this.autoStepping = true;
 }
 Game.prototype.draw = function() {
 	var ctx = this.context;
@@ -62,10 +61,6 @@ Game.prototype.turn = function() {
 			this.grid.space[i][j].rgb = this.grid.space[i][j].nextRgb;
 		}, this);
 	}, this);
-}
-Game.prototype.play = function() {
-	while (this.autoStepping)
-		this.draw(this.grid);
 }
 function numberToPaddedHex(num) {
 	var result = Number(num).toString(16);
@@ -262,14 +257,21 @@ var defaultOpts = {
 }
 
 var game = new Game('canvas', defaultOpts);
+var autoStepping = true;
 game.setGrid();
 
 // html button commands
-function start() {
-	// game.play();
+function play() {
+	autoStepping = true;
+	function autoStep() {
+		step();
+		if (autoStepping)
+			requestAnimationFrame(autoStep);
+	}
+	autoStep();
 }
 function stop() {
-	// game.autoStepping = false;
+	autoStepping = false;
 }
 function step() {
 	game.turn();
@@ -280,12 +282,8 @@ function clearGrid() {
 }
 
 // Starting configurations
-function random() {
-
-}
-function block() {
-
-}
+function random() {}
+function block() {}
 function line() {
 	for (var c = 0; c < game.columns; c++) {
 		game.grid.space[c][Math.floor(game.rows/2)].state = 1;
