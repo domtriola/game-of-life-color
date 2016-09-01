@@ -249,8 +249,8 @@ function randRgb() {
 //* Run Program
 
 var defaultOpts = {
-	rows: 50,
-	columns: 50,
+	rows: 60,
+	columns: 60,
 	domIntensity: 2,
 	recIntensity: 2,
 	midIntensity: 50
@@ -282,12 +282,57 @@ function clearGrid() {
 }
 
 // Starting configurations
-function random() {}
-function block() {}
+function random() {
+	for (var c = 0; c < game.columns; c++) {
+		for (var r = 0; r < game.rows; r++) {
+			if (Math.floor(Math.random() * 2)) {
+				game.grid.space[c][r].state = 1;
+				game.grid.space[c][r].colorRandom();
+			}
+		}
+	}
+	game.draw();
+}
+function block() {
+	var cells = [game.grid.space[game.columns/2 - 1][game.rows/2 - 1],
+							 game.grid.space[game.columns/2][game.rows/2 - 1],
+							 game.grid.space[game.columns/2 - 1][game.rows/2],
+							 game.grid.space[game.columns/2][game.rows/2]];
+	cells.forEach(function(cell) {
+		cell.state = 1;
+		cell.colorRandom();
+	});
+	game.draw();
+}
+function beehive() {
+	var cells = [game.grid.space[game.columns/2 - 1][game.rows/2 - 2],
+							 game.grid.space[game.columns/2][game.rows/2 - 2],
+							 game.grid.space[game.columns/2 - 2][game.rows/2 - 1],
+							 game.grid.space[game.columns/2 + 1][game.rows/2 - 1],
+							 game.grid.space[game.columns/2 - 1][game.rows/2],
+							 game.grid.space[game.columns/2][game.rows/2]];
+	cells.forEach(function(cell) {
+		cell.state = 1;
+		cell.colorRandom();
+	});
+	game.draw();
+}
 function line() {
 	for (var c = 0; c < game.columns; c++) {
 		game.grid.space[c][Math.floor(game.rows/2)].state = 1;
 		game.grid.space[c][Math.floor(game.rows/2)].colorRandom();
 	}
+	game.draw();
+}
+function rPentomino() {
+	var cells = [game.grid.space[game.columns/2 - 1][game.rows/2 - 1],
+							 game.grid.space[game.columns/2][game.rows/2 - 1],
+							 game.grid.space[game.columns/2 - 1][game.rows/2],
+							 game.grid.space[game.columns/2 - 2][game.rows/2],
+							 game.grid.space[game.columns/2 - 1][game.rows/2 + 1]];
+	cells.forEach(function(cell) {
+		cell.state = 1;
+		cell.colorRandom();
+	});
 	game.draw();
 }
